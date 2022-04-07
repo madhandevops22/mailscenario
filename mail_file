@@ -1,0 +1,54 @@
+post {  
+         always {  
+             echo 'This will always run'  
+             
+             
+         }  
+         success {  
+             echo 'This will run only if successful'
+             echo "currentBuild.currentResult: ${currentBuild.currentResult}"
+             
+             mail bcc: 'purusottam.singh@daimler.com', from: 'noreply-kafka@daimler.com', 
+             body: """
+             
+                <h1 style="color: #5e9ca0; padding-left: 40px;">Shared Event Streaming Platform (Kafka)</h1>
+                <h2 style="color: #2e6c80;">CI-CD Pipeline job status: <span style="background-color: #22cc00; color: #fff; display: inline-block; padding: 3px 10px; font-weight: bold; border-radius: 5px;">Build ${currentBuild.currentResult}</span>
+                </h2>
+                <p>Kindly check the application.&nbsp;</p>
+                <p>CI-CD Pipeline Project Name : <span style="background-color: #2b2301; color: #fff; display: inline-block; padding: 3px 10px; font-weight: bold; border-radius: 5px;">'${env.JOB_NAME} [${env.BUILD_NUMBER}]' </span></p>
+                <p><strong>&nbsp;</strong></p>
+                <p style="color: #2e6c80;"><strong>Best Regards,<br />Kafka Team (LinkedEngineering) <br />Mercedes Benz AG&nbsp;</strong></p>
+                
+                """, 
+             cc: '', charset: 'UTF-8', mimeType: 'text/html', replyTo: '', subject: "Pipeline: ${currentBuild.fullDisplayName} ${currentBuild.result}", 
+             to: "kafka-support@daimler.com";  
+             
+         }  
+         failure {  
+             mail bcc: 'purusottam.singh@daimler.com', 
+             body: """
+             
+                <h1 style="color: #5e9ca0; padding-left: 40px;">Shared Event Streaming Platform (Kafka)</h1>
+                <h2 style="color: #2e6c80;">CI-CD Pipeline job status: <span style="background-color: #ff002b; color: #fff; display: inline-block; padding: 3px 10px; font-weight: bold; border-radius: 5px;">Build ${currentBuild.currentResult}</span>
+                </h2>
+                
+                <p>Kindly check the pipeline error logs at ${env.BUILD_URL} .&nbsp;</p>
+                <p>CI-CD Pipeline Project Name : <span style="background-color: #2b2301; color: #fff; display: inline-block; padding: 3px 10px; font-weight: bold; border-radius: 5px;">'${env.JOB_NAME} [${env.BUILD_NUMBER}]' </span></p>
+                <p><strong>&nbsp;</strong></p>
+                <p style="color: #2e6c80;"><strong>Best Regards,<br />Kafka Team (LinkedEngineering) <br />Mercedes Benz AG&nbsp;</strong></p>
+                
+                """,
+             
+             cc: '', charset: 'UTF-8', from: 'noreply-kafka@daimler.com', mimeType: 'text/html', replyTo: '', 
+             subject: "Pipeline: ${currentBuild.fullDisplayName} ${currentBuild.result}",
+             to: "kafka-support@daimler.com";  
+         }  
+         unstable {  
+             echo 'This will run only if the run was marked as unstable'  
+         }  
+         changed {  
+             echo 'This will run only if the state of the Pipeline has changed'  
+             echo 'For example, if the Pipeline was previously failing but is now successful'  
+         }  
+     }
+}
